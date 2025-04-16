@@ -1,0 +1,31 @@
+[project]
+name = "fastapi-blog"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "aiosqlite>=0.21.0",
+    "fastapi[all]>=0.115.12",
+    "pydantic-settings>=2.8.1",
+    "sqlalchemy>=2.0.40",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.5",
+]
+
+[tool.ruff]
+exclude = [
+    "*/migrations/*",
+    ".venv/",
+    "__init__.py",
+    "apps.py",
+]
+line-length = 79
+indent-width = 4
+[tool.ruff.lint]
+select = ["E", "W", "C", "F", "N", "COM", "I", "Q", "U", "N", "A", "M"]
+ignore = ["F405"]
+fixable = ["ALL"]
+unfixable = []
