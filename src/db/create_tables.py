@@ -1,5 +1,5 @@
-from db.session import engine
-from models.post import Base
+from src.db.session import engine
+from src.models.post import Base
 
 
 async def create_tables():

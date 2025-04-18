@@ -1,5 +1,5 @@
-from schemas.post import PostCreate
-from utils.repository import AbstractRepository
+from src.schemas.post import PostCreate
+from src.utils.repository import AbstractRepository
 
 
 class PostServices:

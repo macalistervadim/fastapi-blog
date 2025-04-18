@@ -1,0 +1,32 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker build -t $DOCKER_USERNAME/fastapi-blog:latest .
+    - docker push $DOCKER_USERNAME/fastapi-blog:latest
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: alpine
+  before_script:
+    - apk add --no-cache openssh
+  script:
+    - echo "$SSH_PRIVATE_KEY" > id_rsa
+    - chmod 600 id_rsa
+    - ssh -o StrictHostKeyChecking=no -i id_rsa $SSH_USER@$SSH_HOST "
+        docker pull $DOCKER_USERNAME/fastapi-blog:latest &&
+        docker stop fastapi || true &&
+        docker rm fastapi || true &&
+        docker run -d --env-file .env.prod --name fastapi $DOCKER_USERNAME/fastapi-blog:latest
+      "
+  only:
+    - main
