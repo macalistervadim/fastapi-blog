@@ -32,9 +32,9 @@ deploy:
         git pull &&
         export DOCKER_IMAGE=$DOCKER_IMAGE &&
         export DATABASE_URL=$DATABASE_URL &&
-        docker compose -f docker-compose.prod.yml pull &&
-        docker compose -f docker-compose.prod.yml down &&
-        docker compose -f docker-compose.prod.yml up -d
+        docker-compose -f docker-compose.prod.yml pull &&
+        docker-compose -f docker-compose.prod.yml down &&
+        docker-compose -f docker-compose.prod.yml up -d
       "
   only:
     - main
