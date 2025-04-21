@@ -9,6 +9,7 @@ description = "Add your description here"
 requires-python = ">=3.13"
 dependencies = [
     "aiosqlite>=0.21.0",
+    "alembic>=1.15.2",
     "asyncpg>=0.30.0",
     "fastapi[all]>=0.115.12",
     "pydantic-settings>=2.8.1",
@@ -21,7 +22,7 @@ where = ["src"]
 
 [tool.ruff]
 exclude = [
-    "*/migrations/*",
+    "alembic/*",
     ".venv/",
     "__init__.py",
     "apps.py",

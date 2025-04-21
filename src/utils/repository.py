@@ -12,14 +12,14 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self):
+    async def get_all(self) -> None:
         raise NotImplementedError
 
 
 class SQLAlchemyRepository(AbstractRepository):
     model = None
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def add_one(self, data: dict) -> int:
@@ -28,7 +28,7 @@ class SQLAlchemyRepository(AbstractRepository):
         await self.session.commit()
         return res.scalar_one()
 
-    async def get_all(self):
+    async def get_all(self) -> list:
         smtp = select(self.model)
         res = await self.session.execute(smtp)
         return [PostRead.model_validate(row[0]) for row in res.all()]
