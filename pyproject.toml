@@ -35,3 +35,9 @@ ignore = ["F405"]
 fixable = ["ALL"]
 unfixable = []
 
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "pre-commit>=4.2.0",
+]
+
