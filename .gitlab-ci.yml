@@ -7,7 +7,8 @@ stages:
 variables:
   DOCKER_IMAGE: $DOCKER_USERNAME/fastapi-blog:$CI_COMMIT_SHORT_SHA
 
-.rules_template: &rules_template
+# Общие правила для большинства jobs
+.common_rules:
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "prod"'
     - if: '$CI_COMMIT_BRANCH =~ /^feat\/.*/'
@@ -24,7 +25,8 @@ build:
     - docker build -t $DOCKER_IMAGE .
     - docker push $DOCKER_IMAGE
   rules:
-    - *rules_template
+    - if: '$CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "prod"'
+    - if: '$CI_MERGE_REQUEST_ID'
     - if: '$CI_COMMIT_BRANCH =~ /^feat\/.*/ || $CI_COMMIT_BRANCH =~ /^fix\/.*/'
       when: manual
 
@@ -34,7 +36,7 @@ linters:
   script:
     - ruff check .
   rules:
-    - *rules_template
+    - !reference [.common_rules, rules]
 
 test:
   stage: test
@@ -42,7 +44,7 @@ test:
   script:
     - pytest --maxfail=1 --disable-warnings -q
   rules:
-    - *rules_template
+    - !reference [.common_rules, rules]
 
 deploy:
   stage: deploy
