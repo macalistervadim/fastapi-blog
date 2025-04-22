@@ -1,5 +1,7 @@
 stages:
   - build
+  - linters
+  - test
   - deploy
 
 variables:
@@ -12,11 +14,37 @@ build:
     - docker:dind
   script:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-    - docker build -t $DOCKER_IMAGE .
+    - docker build -t $DOCKER_IMAGE . 
     - docker push $DOCKER_IMAGE
   only:
     - dev
     - prod
+    - feat/*
+    - fix/*
+
+linters:
+  stage: linters
+  image: $DOCKER_IMAGE
+  script: 
+    - ruff check .
+  only: 
+    - dev
+    - prod
+    - feat/*
+    - fix/*
+    - merge_requests
+
+test:
+  stage: test
+  image: $DOCKER_IMAGE
+  script:
+    - pytest --maxfail=1 --disable-warnings -q
+  only:
+    - dev
+    - prod
+    - feat/*
+    - fix/*
+    - merge_requests
 
 deploy:
   stage: deploy
