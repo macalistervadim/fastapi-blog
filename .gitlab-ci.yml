@@ -21,6 +21,7 @@ build:
     - prod
     - feat/*
     - fix/*
+    - merge_requests
 
 linters:
   stage: linters
