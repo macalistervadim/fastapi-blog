@@ -7,13 +7,6 @@ stages:
 variables:
   DOCKER_IMAGE: $DOCKER_USERNAME/fastapi-blog:$CI_COMMIT_SHORT_SHA
 
-# Общие правила для большинства jobs
-.common_rules:
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "prod"'
-    - if: '$CI_COMMIT_BRANCH =~ /^feat\/.*/'
-    - if: '$CI_COMMIT_BRANCH =~ /^fix\/.*/'
-    - if: '$CI_MERGE_REQUEST_ID'
 
 build:
   stage: build
@@ -24,27 +17,31 @@ build:
     - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     - docker build -t $DOCKER_IMAGE .
     - docker push $DOCKER_IMAGE
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "prod"'
-    - if: '$CI_MERGE_REQUEST_ID'
-    - if: '$CI_COMMIT_BRANCH =~ /^feat\/.*/ || $CI_COMMIT_BRANCH =~ /^fix\/.*/'
-      when: manual
+  only: 
+    - dev
+    - prod
+    - merge_requests
 
 linters:
   stage: linters
   image: $DOCKER_IMAGE
   script:
     - ruff check .
-  rules:
-    - !reference [.common_rules, rules]
+  only:
+    - dev
+    - prod
+    - merge_requests
 
 test:
   stage: test
   image: $DOCKER_IMAGE
   script:
     - pytest --maxfail=1 --disable-warnings -q
-  rules:
-    - !reference [.common_rules, rules]
+  only:
+    - dev
+    - prod
+    - merge_requests
+    
 
 deploy:
   stage: deploy
@@ -65,7 +62,7 @@ deploy:
         docker-compose -f docker-compose.prod.yml down &&
         docker-compose -f docker-compose.prod.yml up -d
       "
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "dev"'
-    - if: '$CI_COMMIT_BRANCH == "prod"'
-      when: manual
+  only:
+    - dev
+    - prod
+    - merge_requests
