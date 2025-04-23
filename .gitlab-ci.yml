@@ -40,9 +40,6 @@ test:
     POSTGRES_USER: test_user
     POSTGRES_PASSWORD: test_password
     DATABASE_URL: postgresql://test_user:test_password@postgres:5432/test_db
-  before_script:
-    - apk add --no-cache postgresql-client
-    - until pg_isready -h postgres -U test_user -d test_db; do sleep 1; done
   script:
     - pytest --maxfail=1 --disable-warnings -q
   only:
