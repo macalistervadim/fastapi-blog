@@ -5,13 +5,15 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     DATABASE_URL: str
-
-    @property
-    def db_url(self):
-        return self.DATABASE_URL
+    POSTGRES_DB: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str = "database"
+    POSTGRES_PORT: int = 5432
 
     class Config:
         env_file = os.environ.get("ENV_FILE", ".env.local")
+        extra = "ignore"
 
 
-settings = Settings()
+settings = Settings()  # type: ignore
