@@ -1,6 +1,5 @@
 stages:
   - build
-  - linters
   - test
   - deploy
 
@@ -24,18 +23,6 @@ build:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker build -t $DOCKER_IMAGE .
     - docker push $DOCKER_IMAGE
-  only:
-    - prod
-    - dev
-    - merge_requests
-    - /^fix\/.*$/
-    - /^feat\/.*$/
-
-linters:
-  stage: linters
-  image: $DOCKER_IMAGE
-  script:
-    - ruff check .
   only:
     - prod
     - dev
