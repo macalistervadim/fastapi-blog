@@ -7,7 +7,7 @@ from src.services.post import PostServices
 
 
 @pytest.mark.asyncio
-async def test_add_post():
+async def test_add_post() -> None:
     mock_repo = AsyncMock()
     mock_repo.add_one.return_value = 1
 

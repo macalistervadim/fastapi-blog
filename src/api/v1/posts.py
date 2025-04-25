@@ -22,7 +22,9 @@ async def get_post_service(
 
 
 @router.get("/", response_model=list[PostRead])
-async def get_posts(repo: PostRepository = Depends(get_post_repo)):
+async def get_posts(
+    repo: PostRepository = Depends(get_post_repo),
+) -> list[PostRead]:
     return await repo.get_all()
 
 
@@ -30,7 +32,7 @@ async def get_posts(repo: PostRepository = Depends(get_post_repo)):
 async def create_post(
     post: PostCreate,
     service: PostServices = Depends(get_post_service),
-):
+) -> dict[str, int]:
     try:
         task_id = await service.add_post(post)
         return {"task_id": task_id}
