@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    restart: always
+    volumes:
+      - ./src:/app/src
+      - ./alembic.ini:/app/alembic.ini
+      - ./alembic:/app/alembic
+    env_file:
+      - ${ENV_FILE:-.env.local}
+    expose:
+      - "8000" 
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
+    
+  database:
+    image: postgres:17-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test_user -d test_db" ]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
