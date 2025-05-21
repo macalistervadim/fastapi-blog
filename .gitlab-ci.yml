@@ -59,16 +59,16 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa
     - echo "StrictHostKeyChecking no" >> ~/.ssh/config
   script:
-    - ssh "$SSH_USER@$SSH_HOST" <<EOF
-      set -e
-      cd ~/fastapi-app/fastapi-blog
-      git pull
-      export DOCKER_IMAGE="$DOCKER_IMAGE"
-      export DATABASE_URL="$DATABASE_URL"
-      docker-compose -f docker-compose.prod.yml pull
-      docker-compose -f docker-compose.prod.yml down
-      docker-compose -f docker-compose.prod.yml up -d
-      EOF
+    - |
+      ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" \
+        "DOCKER_IMAGE='$DOCKER_IMAGE' DATABASE_URL='$DATABASE_URL' bash -c '
+          set -e
+          cd ~/fastapi-app/fastapi-blog
+          git pull
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f docker-compose.prod.yml up -d
+        '"
 
   only:
     - dev
