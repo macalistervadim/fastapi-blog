@@ -4,6 +4,9 @@ services:
   web:
     image: $DOCKER_IMAGE
     restart: always
+    volumes:
+      - ./alembic.ini:/app/alembic.ini
+      - ./alembic:/app/alembic
     environment:
       DATABASE_URL: ${DATABASE_URL}
     expose:
